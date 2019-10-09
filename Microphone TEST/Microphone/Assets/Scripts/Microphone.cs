@@ -11,19 +11,41 @@ public class Microphone : MonoBehaviour
     private KeywordRecognizer keywordRecognizer;
     private KeywordRecognizer WakeUpRecogniser;
     private Dictionary<string, Action> actions = new Dictionary<string, Action>();
-    private Dictionary<string, Action> WakeUpWord = new Dictionary<string, Action>();
+    private Dictionary<string, Action> WakeUpWords = new Dictionary<string, Action>();
     private PhraseRecognizer phraseRecognizer;
     bool isAwake = false;
 
+    public string WakeUpWord = "Echo";
+
+    public GameObject[] Objects;
+
+    public List<Routine> routineList;
+
     private void Start()
     {
-        WakeUpWord.Add("Echo", WakeUp);
-        actions.Add("Forward", Forward);
-        actions.Add("up", Up);
-        actions.Add("down", Down);
-        actions.Add("back", Back);
+        WakeUpWords.Add(WakeUpWord, WakeUp);
+        //actions.Add("Forward", Forward);
+        //actions.Add("up", Up);
+        //actions.Add("down", Down);
+        //actions.Add("back", Back);
 
-        WakeUpRecogniser = new KeywordRecognizer(WakeUpWord.Keys.ToArray());
+        for (int i = 0; i < Objects.Length; i++)
+        {
+            foreach (string command in Objects[i].GetComponent<Routine>().command)
+            {
+                actions.Add(command, Forward);
+            }
+            
+        }
+
+        foreach (KeyValuePair<string, System.Action> s in actions)
+        {
+            print(s.Key);
+        }
+
+      
+
+        WakeUpRecogniser = new KeywordRecognizer(WakeUpWords.Keys.ToArray());
         WakeUpRecogniser.OnPhraseRecognized += RecognizedSpeech;
         WakeUpRecogniser.Start();
         isAwake = false;
@@ -41,14 +63,17 @@ public class Microphone : MonoBehaviour
     {
         Debug.Log(speech.text);
 
-        WakeUpWord[speech.text].Invoke();
+        WakeUpWords[speech.text].Invoke();
     }
     private void RecognizedSpeech1(PhraseRecognizedEventArgs speech)
     {
-
         Debug.Log(speech.text);
         if (isAwake == true)
-        { actions[speech.text].Invoke(); }
+        {
+            actions[speech.text].Invoke();
+        }
+
+        
     }
 
     private void Forward()
@@ -56,6 +81,7 @@ public class Microphone : MonoBehaviour
         transform.Translate(1, 0, 0);
         keywordRecognizer.Stop();
         isAwake = false;
+        print("Action Completed");
     }
 
     private void Back()
@@ -63,6 +89,7 @@ public class Microphone : MonoBehaviour
         transform.Translate(-1, 0, 0);
         keywordRecognizer.Stop();
         isAwake = false;
+        
     }
 
     private void Up()
@@ -81,11 +108,9 @@ public class Microphone : MonoBehaviour
 
     private void WakeUp()
     {
-        
+        print("Now Listening...");
         keywordRecognizer.Start();
         isAwake = true;
     }
-
-
 
 }
