@@ -5,6 +5,7 @@ using UnityEngine.Audio;
 using UnityEngine.Windows.Speech;
 using System;
 using System.Linq;
+using UnityEngine.Animations;
 
 public class Microphone : MonoBehaviour
 {
@@ -14,36 +15,32 @@ public class Microphone : MonoBehaviour
     private Dictionary<string, Action> WakeUpWords = new Dictionary<string, Action>();
     private PhraseRecognizer phraseRecognizer;
     bool isAwake = false;
-
     public string WakeUpWord = "Echo";
-
     public GameObject[] Objects;
-
     public List<Routine> routineList;
-
+    private Animation anim;
     private void Start()
     {
+        anim = GetComponent<Animation>();
         WakeUpWords.Add(WakeUpWord, WakeUp);
         //actions.Add("Forward", Forward);
         //actions.Add("up", Up);
         //actions.Add("down", Down);
         //actions.Add("back", Back);
+        actions.Add("rise", Rise);
 
         for (int i = 0; i < Objects.Length; i++)
         {
             foreach (string command in Objects[i].GetComponent<Routine>().command)
             {
                 actions.Add(command, Forward);
-            }
-            
+            }         
         }
 
         foreach (KeyValuePair<string, System.Action> s in actions)
         {
             print(s.Key);
         }
-
-      
 
         WakeUpRecogniser = new KeywordRecognizer(WakeUpWords.Keys.ToArray());
         WakeUpRecogniser.OnPhraseRecognized += RecognizedSpeech;
@@ -52,6 +49,7 @@ public class Microphone : MonoBehaviour
 
         keywordRecognizer = new KeywordRecognizer(actions.Keys.ToArray());
         keywordRecognizer.OnPhraseRecognized += RecognizedSpeech1;
+
     }
 
     internal static AudioClip Start(string v1, bool v2, int v3, int v4)
@@ -71,9 +69,8 @@ public class Microphone : MonoBehaviour
         if (isAwake == true)
         {
             actions[speech.text].Invoke();
-        }
-
-        
+            anim.Play();
+        }       
     }
 
     private void Forward()
@@ -88,8 +85,7 @@ public class Microphone : MonoBehaviour
     {
         transform.Translate(-1, 0, 0);
         keywordRecognizer.Stop();
-        isAwake = false;
-        
+        isAwake = false;       
     }
 
     private void Up()
@@ -112,5 +108,9 @@ public class Microphone : MonoBehaviour
         keywordRecognizer.Start();
         isAwake = true;
     }
-
+    
+    private void Rise()
+    {
+        
+    }
 }

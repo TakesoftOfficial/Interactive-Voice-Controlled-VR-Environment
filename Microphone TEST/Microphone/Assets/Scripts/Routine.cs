@@ -13,11 +13,4 @@ public class Routine : MonoBehaviour
         obj = this.gameObject;
     }
 
-    public void Update()
-    {
-        
-
-    }
-
-
 }
