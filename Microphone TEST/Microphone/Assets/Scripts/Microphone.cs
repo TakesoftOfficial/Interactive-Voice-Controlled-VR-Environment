@@ -11,33 +11,38 @@ public class Microphone : MonoBehaviour
 {
     private KeywordRecognizer keywordRecognizer;
     private KeywordRecognizer WakeUpRecogniser;
-    private Dictionary<string, Action> actions = new Dictionary<string, Action>();
+    private Dictionary<string, ActionInvoker> actions = new Dictionary<string, ActionInvoker>();
     private Dictionary<string, Action> WakeUpWords = new Dictionary<string, Action>();
     private PhraseRecognizer phraseRecognizer;
     bool isAwake = false;
     public string WakeUpWord = "Echo";
     public GameObject[] Objects;
     public List<Routine> routineList;
-    private Animation anim;
+    //private Animator anim;
+    private bool voiceCommand;
+
+
+
     private void Start()
     {
-        anim = GetComponent<Animation>();
+
+        
         WakeUpWords.Add(WakeUpWord, WakeUp);
         //actions.Add("Forward", Forward);
         //actions.Add("up", Up);
         //actions.Add("down", Down);
         //actions.Add("back", Back);
-        actions.Add("rise", Rise);
 
         for (int i = 0; i < Objects.Length; i++)
         {
             foreach (string command in Objects[i].GetComponent<Routine>().command)
             {
-                actions.Add(command, Forward);
+                ActionInvoker ai = new ActionInvoker(Objects[i].GetComponent<Animator>(), Objects[i].GetComponent<Routine>().MethodName);
+                actions.Add(command, ai);
             }         
         }
 
-        foreach (KeyValuePair<string, System.Action> s in actions)
+        foreach (KeyValuePair<string, ActionInvoker> s in actions)
         {
             print(s.Key);
         }
@@ -68,8 +73,8 @@ public class Microphone : MonoBehaviour
         Debug.Log(speech.text);
         if (isAwake == true)
         {
-            actions[speech.text].Invoke();
-            anim.Play();
+            ActionInvoker temp = actions[speech.text];
+            temp.anim.SetBool(temp.str, true);
         }       
     }
 
@@ -108,9 +113,5 @@ public class Microphone : MonoBehaviour
         keywordRecognizer.Start();
         isAwake = true;
     }
-    
-    private void Rise()
-    {
-        
-    }
+
 }
