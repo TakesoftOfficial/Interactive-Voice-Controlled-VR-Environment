@@ -328,8 +328,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   command:
-  - RISE
+  - Rise
   - Up
+  anim: {fileID: 694686797}
+  action: {fileID: 694686796}
+  MethodName: 
 --- !u!65 &694686793
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -451,11 +454,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8f6774ab2cf9df64c8ca6ae6533e82eb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  WakeUpWord: Computer
+  WakeUpWord: Siri
   Objects:
   - {fileID: 694686791}
   routineList:
-  - {fileID: 0}
+  - {fileID: 694686792}
 --- !u!4 &1332528910
 Transform:
   m_ObjectHideFlags: 0

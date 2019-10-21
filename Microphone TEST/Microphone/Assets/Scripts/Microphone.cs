@@ -17,7 +17,7 @@ public class Microphone : MonoBehaviour
     bool isAwake = false;
     public string WakeUpWord = "Echo";
     public GameObject[] Objects;
-    public List<Routine> routineList;
+    private List<Routine> routineList;
     //private Animator anim;
     private bool voiceCommand;
 
@@ -25,8 +25,6 @@ public class Microphone : MonoBehaviour
 
     private void Start()
     {
-
-        
         WakeUpWords.Add(WakeUpWord, WakeUp);
         //actions.Add("Forward", Forward);
         //actions.Add("up", Up);
@@ -35,10 +33,16 @@ public class Microphone : MonoBehaviour
 
         for (int i = 0; i < Objects.Length; i++)
         {
-            foreach (string command in Objects[i].GetComponent<Routine>().command)
-            {
-                ActionInvoker ai = new ActionInvoker(Objects[i].GetComponent<Animator>(), Objects[i].GetComponent<Routine>().MethodName);
-                actions.Add(command, ai);
+           
+                for (int j = 0; j < Objects[i].transform.childCount; j++)
+                {
+                GameObject childObj = Objects[i].transform.GetChild(j).gameObject;
+                foreach (string command in childObj.GetComponent<Routine>().command)
+                {
+                    ActionInvoker ai = new ActionInvoker(Objects[i].GetComponent<Animator>(), childObj.GetComponent<Routine>().MethodName, childObj.GetComponent<Routine>().istrue);
+                    actions.Add(command, ai);
+                }
+                
             }         
         }
 
@@ -74,8 +78,11 @@ public class Microphone : MonoBehaviour
         if (isAwake == true)
         {
             ActionInvoker temp = actions[speech.text];
-            temp.anim.SetBool(temp.str, true);
-        }       
+            temp.anim.SetBool(temp.str, temp.isTrue);
+            
+        }
+        keywordRecognizer.Stop();
+        print("Action Completed");  
     }
 
     private void Forward()
@@ -83,7 +90,7 @@ public class Microphone : MonoBehaviour
         transform.Translate(1, 0, 0);
         keywordRecognizer.Stop();
         isAwake = false;
-        print("Action Completed");
+        
     }
 
     private void Back()

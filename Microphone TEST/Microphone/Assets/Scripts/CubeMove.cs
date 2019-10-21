@@ -19,5 +19,6 @@ public class CubeMove : MonoBehaviour
     void Rise()
     {
         this.gameObject.GetComponent<Animator>().SetBool("isMoving", true);
+        this.gameObject.GetComponent<Animator>().SetBool("toLeft", true);
     }
 }
