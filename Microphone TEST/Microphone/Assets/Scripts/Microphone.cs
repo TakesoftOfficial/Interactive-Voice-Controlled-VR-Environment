@@ -9,6 +9,8 @@ using UnityEngine.Animations;
 
 public class Microphone : MonoBehaviour
 {
+    //public float waitTime = 3;
+    //WaitForSecondsRealtime waitForSeconsRealtime;
     private KeywordRecognizer keywordRecognizer;
     private KeywordRecognizer WakeUpRecogniser;
     private Dictionary<string, ActionInvoker> actions = new Dictionary<string, ActionInvoker>();
@@ -18,32 +20,29 @@ public class Microphone : MonoBehaviour
     public string WakeUpWord = "Echo";
     public GameObject[] Objects;
     private List<Routine> routineList;
-    //private Animator anim;
     private bool voiceCommand;
-
+    Coroutine timer;
+    //public ConfidenceLevel confidence = ConfidenceLevel.Medium;
 
 
     private void Start()
     {
+        StartCoroutine(Example());
         WakeUpWords.Add(WakeUpWord, WakeUp);
-        //actions.Add("Forward", Forward);
-        //actions.Add("up", Up);
-        //actions.Add("down", Down);
-        //actions.Add("back", Back);
 
         for (int i = 0; i < Objects.Length; i++)
         {
            
                 for (int j = 0; j < Objects[i].transform.childCount; j++)
                 {
-                GameObject childObj = Objects[i].transform.GetChild(j).gameObject;
-                foreach (string command in childObj.GetComponent<Routine>().command)
-                {
+                    GameObject childObj = Objects[i].transform.GetChild(j).gameObject;
+                    foreach (string command in childObj.GetComponent<Routine>().command)
+                    {
                     ActionInvoker ai = new ActionInvoker(Objects[i].GetComponent<Animator>(), childObj.GetComponent<Routine>().MethodName, childObj.GetComponent<Routine>().istrue);
                     actions.Add(command, ai);
-                }
+                    }
                 
-            }         
+                }         
         }
 
         foreach (KeyValuePair<string, ActionInvoker> s in actions)
@@ -60,6 +59,49 @@ public class Microphone : MonoBehaviour
         keywordRecognizer.OnPhraseRecognized += RecognizedSpeech1;
 
     }
+
+    IEnumerator Example()
+    {
+        print(Time.time);
+        yield return new WaitForSecondsRealtime(5);
+        print(Time.time);
+        //    Debug.Log("Start waiting: " + Time.realtimeSinceStartup);
+        //    if (waitForSeconsRealtime == null)
+
+        //        waitForSeconsRealtime = new WaitForSecondsRealtime(waitTime);
+
+        //    else
+
+        //        waitForSeconsRealtime.waitTime = waitTime;
+
+        //        yield return waitForSeconsRealtime;
+
+        //    print("End waiting: " + Time.realtimeSinceStartup);
+    }
+
+    float currCountdownValue;
+    public IEnumerator StartCountdown(float countdownValue = 15)
+    {
+        currCountdownValue = countdownValue;
+        while (currCountdownValue > 0)
+        {
+            Debug.Log("Countdown: " + currCountdownValue);
+            yield return new WaitForSeconds(1.0f);
+            currCountdownValue--;
+        }
+
+        isAwake = false;
+        keywordRecognizer.Stop();
+        print("Now Going to Sleep...");
+    }
+
+    //private void OnGUI()
+    //{
+    //    if(GUILayout.Button("Start Waiting"))
+    //    {
+    //        StartCoroutine(DoWaitTest());
+    //    }
+    //}
 
     internal static AudioClip Start(string v1, bool v2, int v3, int v4)
     {
@@ -81,37 +123,7 @@ public class Microphone : MonoBehaviour
             temp.anim.SetBool(temp.str, temp.isTrue);
             
         }
-        keywordRecognizer.Stop();
-        print("Action Completed");  
-    }
-
-    private void Forward()
-    {
-        transform.Translate(1, 0, 0);
-        keywordRecognizer.Stop();
-        isAwake = false;
-        
-    }
-
-    private void Back()
-    {
-        transform.Translate(-1, 0, 0);
-        keywordRecognizer.Stop();
-        isAwake = false;       
-    }
-
-    private void Up()
-    {
-        transform.Translate(0, 1, 0);
-        keywordRecognizer.Stop();
-        isAwake = false;
-    }
-
-    private void Down()
-    {
-        transform.Translate(0, -1, 0);
-        keywordRecognizer.Stop();
-        isAwake = false;
+        Finish();
     }
 
     private void WakeUp()
@@ -119,6 +131,14 @@ public class Microphone : MonoBehaviour
         print("Now Listening...");
         keywordRecognizer.Start();
         isAwake = true;
+        timer = StartCoroutine(StartCountdown());
+    }
+
+    private void Finish()
+    {
+        StopCoroutine(timer);
+        keywordRecognizer.Stop();
+        print("Action Completed");
     }
 
 }
