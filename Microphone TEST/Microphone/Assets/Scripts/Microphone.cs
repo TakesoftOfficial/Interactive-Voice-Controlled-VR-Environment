@@ -9,8 +9,7 @@ using UnityEngine.Animations;
 
 public class Microphone : MonoBehaviour
 {
-    //public float waitTime = 3;
-    //WaitForSecondsRealtime waitForSeconsRealtime;
+    
     private KeywordRecognizer keywordRecognizer;
     private KeywordRecognizer WakeUpRecogniser;
     private Dictionary<string, ActionInvoker> actions = new Dictionary<string, ActionInvoker>();
@@ -22,7 +21,6 @@ public class Microphone : MonoBehaviour
     private List<Routine> routineList;
     private bool voiceCommand;
     Coroutine timer;
-    //public ConfidenceLevel confidence = ConfidenceLevel.Medium;
 
 
     private void Start()
@@ -65,18 +63,7 @@ public class Microphone : MonoBehaviour
         print(Time.time);
         yield return new WaitForSecondsRealtime(5);
         print(Time.time);
-        //    Debug.Log("Start waiting: " + Time.realtimeSinceStartup);
-        //    if (waitForSeconsRealtime == null)
-
-        //        waitForSeconsRealtime = new WaitForSecondsRealtime(waitTime);
-
-        //    else
-
-        //        waitForSeconsRealtime.waitTime = waitTime;
-
-        //        yield return waitForSeconsRealtime;
-
-        //    print("End waiting: " + Time.realtimeSinceStartup);
+      
     }
 
     float currCountdownValue;
@@ -94,14 +81,6 @@ public class Microphone : MonoBehaviour
         keywordRecognizer.Stop();
         print("Now Going to Sleep...");
     }
-
-    //private void OnGUI()
-    //{
-    //    if(GUILayout.Button("Start Waiting"))
-    //    {
-    //        StartCoroutine(DoWaitTest());
-    //    }
-    //}
 
     internal static AudioClip Start(string v1, bool v2, int v3, int v4)
     {
