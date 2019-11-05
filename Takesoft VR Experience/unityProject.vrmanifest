@@ -5,7 +5,7 @@
       "app_key": "application.generated.unity.takesoftvrexperience.exe",
       "launch_type": "url",
       "url": "steam://launch/",
-      "action_manifest_path": "C:\\Users\\dgreader\\Documents\\GitHub\\ArchViz-Simlated-Voice-Assistant\\Takesoft VR Experience\\Assets\\StreamingAssets\\SteamVR\\actions.json",
+      "action_manifest_path": "C:\\Users\\tseow\\Documents\\GitHub\\ArchViz-Simlated-Voice-Assistant\\Takesoft VR Experience\\Assets\\StreamingAssets\\SteamVR\\actions.json",
       "strings": {
         "en_us": {
           "name": "Takesoft VR Experience [Testing]"

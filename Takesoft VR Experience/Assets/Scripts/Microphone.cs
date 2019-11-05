@@ -22,13 +22,20 @@ public class Microphone : MonoBehaviour
     private List<Routine> routineList;
     private bool voiceCommand;
     Coroutine timer;
+
+    public AudioClip OnSound;
+    public AudioClip OffSound;
+    private AudioSource SFX;
+    
     //public ConfidenceLevel confidence = ConfidenceLevel.Medium;
 
 
     private void Start()
     {
-        StartCoroutine(Example());
+        
         WakeUpWords.Add(WakeUpWord, WakeUp);
+        SFX = this.GetComponent<AudioSource>();
+        SFX.loop = false;
 
         for (int i = 0; i < Objects.Length; i++)
         {
@@ -60,27 +67,9 @@ public class Microphone : MonoBehaviour
 
     }
 
-    IEnumerator Example()
-    {
-        print(Time.time);
-        yield return new WaitForSecondsRealtime(5);
-        print(Time.time);
-        //    Debug.Log("Start waiting: " + Time.realtimeSinceStartup);
-        //    if (waitForSeconsRealtime == null)
-
-        //        waitForSeconsRealtime = new WaitForSecondsRealtime(waitTime);
-
-        //    else
-
-        //        waitForSeconsRealtime.waitTime = waitTime;
-
-        //        yield return waitForSeconsRealtime;
-
-        //    print("End waiting: " + Time.realtimeSinceStartup);
-    }
 
     float currCountdownValue;
-    public IEnumerator StartCountdown(float countdownValue = 15)
+    public IEnumerator StartCountdown(float countdownValue = 10)
     {
         currCountdownValue = countdownValue;
         while (currCountdownValue > 0)
@@ -92,6 +81,7 @@ public class Microphone : MonoBehaviour
 
         isAwake = false;
         keywordRecognizer.Stop();
+        PlayOffSound();
         print("Now Going to Sleep...");
     }
 
@@ -131,6 +121,7 @@ public class Microphone : MonoBehaviour
         print("Now Listening...");
         keywordRecognizer.Start();
         isAwake = true;
+        PlayOnSound();
         timer = StartCoroutine(StartCountdown());
     }
 
@@ -139,6 +130,20 @@ public class Microphone : MonoBehaviour
         StopCoroutine(timer);
         keywordRecognizer.Stop();
         print("Action Completed");
+    }
+
+    private void PlayOnSound()
+    {
+        SFX.clip = OnSound;
+        SFX.Play();
+
+    }
+
+    private void PlayOffSound()
+    {
+        SFX.clip = OffSound;
+        SFX.Play();
+
     }
 
 }
