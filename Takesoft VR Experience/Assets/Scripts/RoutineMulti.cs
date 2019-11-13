@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Routine : MonoBehaviour
+public class RoutineMulti : MonoBehaviour
+{
 
-{ 
     public string[] command;
     private GameObject obj;
 
@@ -15,7 +15,6 @@ public class Routine : MonoBehaviour
     public void Start()
     {
         obj = this.gameObject;
-       
-    }
 
+    }
 }

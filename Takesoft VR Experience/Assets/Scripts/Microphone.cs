@@ -43,22 +43,27 @@ public class Microphone : MonoBehaviour
         SFX = this.GetComponent<AudioSource>();
         SFX.loop = false;
 
-        for (int i = 0; i < Objects.Length; i++)
+
+        for (int i = 0; i < Objects.Length; i++) // Cycle through "Smart" objects
         {
            
-                for (int j = 0; j < Objects[i].transform.childCount; j++)
+                for (int j = 0; j < Objects[i].transform.childCount; j++) //Cycle through child objects of "smart" object
                 {
-                    GameObject childObj = Objects[i].transform.GetChild(j).gameObject;
-                    foreach (string command in childObj.GetComponent<Routine>().command)
-                    {
-                    ActionInvoker ai = new ActionInvoker(Objects[i].GetComponent<Animator>(), childObj.GetComponent<Routine>().MethodName, childObj.GetComponent<Routine>().istrue);
-                    actions.Add(command, ai);
+                    GameObject childObj = Objects[i].transform.GetChild(j).gameObject; //set a child to variable
+
+                    if (childObj.GetComponent<Routine>() == true) //Check if object has a routine script
+                    {                      
+                        for (int k = 0; k < childObj.GetComponent<Routine>().command.Length; k++) // Cycle through commands
+                        {
+                            //Add command to dictionary
+                            ActionInvoker ai = new ActionInvoker(Objects[i].GetComponent<Animator>(), childObj.GetComponent<Routine>().MethodName, childObj.GetComponent<Routine>().istrue); 
+                            actions.Add(childObj.GetComponent<Routine>().command[k], ai);
+                        }
                     }
-                
                 }         
         }
 
-        foreach (KeyValuePair<string, ActionInvoker> s in actions)
+        foreach (KeyValuePair<string, ActionInvoker> s in actions) //Print All Commands to console
         {
             print(s.Key);
         }
