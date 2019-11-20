@@ -46,7 +46,6 @@ public class Microphone : MonoBehaviour
 
         for (int i = 0; i < Objects.Length; i++) // Cycle through "Smart" objects
         {
-           
                 for (int j = 0; j < Objects[i].transform.childCount; j++) //Cycle through child objects of "smart" object
                 {
                     GameObject childObj = Objects[i].transform.GetChild(j).gameObject; //set a child to variable

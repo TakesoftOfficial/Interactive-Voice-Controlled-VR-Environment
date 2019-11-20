@@ -5,9 +5,9 @@ using UnityEngine;
 public class RoutineMulti : MonoBehaviour
 {
 
-    public string[] command;
-    private GameObject obj;
-
+    //public string[] command;
+    public GameObject obj;
+    private Animator anim;
 
     public string MethodName;
     public bool istrue;
@@ -15,6 +15,6 @@ public class RoutineMulti : MonoBehaviour
     public void Start()
     {
         obj = this.gameObject;
-
+        anim = obj.GetComponent<Animator>();
     }
 }
