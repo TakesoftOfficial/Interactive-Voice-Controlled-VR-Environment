@@ -7,7 +7,7 @@ public class Routine : MonoBehaviour
 { 
     public string[] command;
     private GameObject obj;
-
+    
 
     public string MethodName;
     public bool istrue;

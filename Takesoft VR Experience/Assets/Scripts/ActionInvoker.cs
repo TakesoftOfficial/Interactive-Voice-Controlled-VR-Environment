@@ -14,4 +14,9 @@ public class ActionInvoker
         this.str = str;
         this.isTrue = isTrue;
     }
+
+    public void Invoke()
+    {
+
+    }
 }

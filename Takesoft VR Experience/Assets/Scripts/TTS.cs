@@ -11,7 +11,6 @@ public class TTS : MonoBehaviour
 
     string loadXMLStandalone(string fileName)
     {
-
         string path = Path.Combine("Resources", fileName);
         path = Path.Combine(Application.dataPath, path);
         Debug.Log("Path:  " + path);
@@ -31,27 +30,22 @@ public class TTS : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-          
+        //if (Input.GetKeyDown(KeyCode.Space))
+        //{
+        //    voice.Volume = 100; // Volume (no xml)
+        //    voice.Rate = 0;  //   Rate (no xml)
 
-            voice.Volume = 100; // Volume (no xml)
-            voice.Rate = 0;  //   Rate (no xml)
-
-
-
-            voice.Speak("Hello World");
-            voice.Speak("It's very hot down here");
-        }
-        if (Input.GetKeyDown(KeyCode.P))
-        {
-            voice.Pause();
-
-        }
-        if (Input.GetKeyDown(KeyCode.R))
-        {
-            voice.Resume();
-        }
+        //    voice.Speak("Hello World");
+        //    voice.Speak("It's very hot down here");
+        //}
+        //if (Input.GetKeyDown(KeyCode.P))
+        //{
+        //    voice.Pause();
+        //}
+        //if (Input.GetKeyDown(KeyCode.R))
+        //{
+        //    voice.Resume();
+        //}
 
         //TEST PER ANDROID
         /*	if (Input.GetTouch)

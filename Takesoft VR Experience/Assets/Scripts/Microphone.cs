@@ -6,6 +6,9 @@ using UnityEngine.Windows.Speech;
 using System;
 using System.Linq;
 using UnityEngine.Animations;
+using SpeechLib;
+using System.IO;
+using System.Xml;
 
 public class Microphone : MonoBehaviour
 {
@@ -26,13 +29,28 @@ public class Microphone : MonoBehaviour
     public AudioClip OnSound;
     public AudioClip OffSound;
     private AudioSource SFX;
-    
+
     //public ConfidenceLevel confidence = ConfidenceLevel.Medium;
 
+    // Text to Speech
+    private SpVoice voice;
+
+    string loadXMLStandalone(string fileName)
+    {
+        string path = Path.Combine("Resources", fileName);
+        path = Path.Combine(Application.dataPath, path);
+        Debug.Log("Path:  " + path);
+        StreamReader streamReader = new StreamReader(path);
+        string streamString = streamReader.ReadToEnd();
+        Debug.Log("STREAM XML STRING: " + streamString);
+        return streamString;
+    }
+   
 
     private void Start()
     {
-        
+        voice = new SpVoice();
+
         WakeUpWords.Add(WakeUpWord, WakeUp);
         WakeUpWords.Add("Siri", WakeUp);
         WakeUpWords.Add("Alexa", WakeUp);
@@ -43,37 +61,17 @@ public class Microphone : MonoBehaviour
         SFX = this.GetComponent<AudioSource>();
         SFX.loop = false;
 
+        AddRoutines(Objects, actions);
 
-        for (int i = 0; i < Objects.Length; i++) // Cycle through "Smart" objects
-        {
-                for (int j = 0; j < Objects[i].transform.childCount; j++) //Cycle through child objects of "smart" object
-                {
-                    GameObject childObj = Objects[i].transform.GetChild(j).gameObject; //set a child to variable
-
-                    if (childObj.GetComponent<Routine>() == true) //Check if object has a routine script
-                    {                      
-                        for (int k = 0; k < childObj.GetComponent<Routine>().command.Length; k++) // Cycle through commands
-                        {
-                            //Add command to dictionary
-                            ActionInvoker ai = new ActionInvoker(Objects[i].GetComponent<Animator>(), childObj.GetComponent<Routine>().MethodName, childObj.GetComponent<Routine>().istrue); 
-                            actions.Add(childObj.GetComponent<Routine>().command[k], ai);
-                        }
-                    }
-                }         
-        }
-
-        foreach (KeyValuePair<string, ActionInvoker> s in actions) //Print All Commands to console
-        {
-            print(s.Key);
-        }
+        
 
         WakeUpRecogniser = new KeywordRecognizer(WakeUpWords.Keys.ToArray());
-        WakeUpRecogniser.OnPhraseRecognized += RecognizedSpeech;
+        WakeUpRecogniser.OnPhraseRecognized += RecognizedWakeUpWord;
         WakeUpRecogniser.Start();
         isAwake = false;
 
         keywordRecognizer = new KeywordRecognizer(actions.Keys.ToArray());
-        keywordRecognizer.OnPhraseRecognized += RecognizedSpeech1;
+        keywordRecognizer.OnPhraseRecognized += RecognizedCommand;
 
     }
 
@@ -95,26 +93,20 @@ public class Microphone : MonoBehaviour
         print("Now Going to Sleep...");
     }
 
-    //private void OnGUI()
-    //{
-    //    if(GUILayout.Button("Start Waiting"))
-    //    {
-    //        StartCoroutine(DoWaitTest());
-    //    }
-    //}
+
 
     internal static AudioClip Start(string v1, bool v2, int v3, int v4)
     {
         throw new NotImplementedException();
     }
 
-    private void RecognizedSpeech(PhraseRecognizedEventArgs speech)
+    private void RecognizedWakeUpWord(PhraseRecognizedEventArgs speech)
     {
         Debug.Log(speech.text);
 
         WakeUpWords[speech.text].Invoke();
     }
-    private void RecognizedSpeech1(PhraseRecognizedEventArgs speech)
+    private void RecognizedCommand(PhraseRecognizedEventArgs speech)
     {
         Debug.Log(speech.text);
         if (isAwake == true)
@@ -124,6 +116,59 @@ public class Microphone : MonoBehaviour
             
         }
         Finish();
+    }
+
+    void AddRoutines(GameObject[] objList, Dictionary<string, ActionInvoker> actions)
+    {
+        for (int i = 0; i < objList.Length; i++) // Cycle through "Smart" objects
+        {
+            for (int j = 0; j < objList[i].transform.childCount; j++) //Cycle through child objects of "smart" object
+            {
+                GameObject childObj = objList[i].transform.GetChild(j).gameObject; //set a child to variable
+
+                if (childObj.GetComponent<Routine>() == true) //Check if object has a routine script
+                {
+                    for (int k = 0; k < childObj.GetComponent<Routine>().command.Length; k++) // Cycle through commands
+                    {
+                        //Add command to dictionary
+                        ActionInvoker ai = new ActionInvoker(objList[i].GetComponent<Animator>(), childObj.GetComponent<Routine>().MethodName, childObj.GetComponent<Routine>().istrue);
+                        actions.Add(childObj.GetComponent<Routine>().command[k], ai);
+                    }
+                }
+            }
+        }
+        printActions(actions);
+    }
+
+    void AddTTSRoutine(GameObject[] objList, Dictionary<string, ActionInvoker> actions)
+    {
+        for (int i = 0; i < objList.Length; i++) // Cycle through "Smart" objects
+        {
+            for (int j = 0; j < objList[i].transform.childCount; j++) //Cycle through child objects of "smart" object
+            {
+                GameObject childObj = objList[i].transform.GetChild(j).gameObject; //set a child to variable
+
+                if (childObj.GetComponent<TTSRoutine>() == true) //Check if object has a routine script
+                {
+                    for (int k = 0; k < childObj.GetComponent<Routine>().command.Length; k++) // Cycle through commands
+                    {
+                        //Add command to dictionary
+                        //ActionInvoker ai = new ActionInvoker(objList[i].GetComponent<Animator>(), childObj.GetComponent<RoutineRoutine>().MethodName, childObj.GetComponent<Routine>().istrue);
+                        actions.Add(childObj.GetComponent<TTSRoutine>().command[k], ai);
+                    }
+                }
+            }
+        }
+        printActions(actions);
+    }
+
+
+    void printActions(Dictionary<string, ActionInvoker> actions)
+    {
+        foreach (KeyValuePair<string, ActionInvoker> s in actions) //Print All Commands to console
+        {
+            print(s.Key);
+        }
     }
 
     private void WakeUp()
@@ -141,6 +186,7 @@ public class Microphone : MonoBehaviour
         keywordRecognizer.Stop();
         print("Action Completed");
     }
+
 
     private void PlayOnSound()
     {
