@@ -17,11 +17,13 @@ public class Microphone : MonoBehaviour
     private KeywordRecognizer keywordRecognizer;
     private KeywordRecognizer WakeUpRecogniser;
     private Dictionary<string, ActionInvoker> actions = new Dictionary<string, ActionInvoker>();
+    private Dictionary<string, TTSInvoker> TTS = new Dictionary<string, TTSInvoker>();
     private Dictionary<string, Action> WakeUpWords = new Dictionary<string, Action>();
     private PhraseRecognizer phraseRecognizer;
     bool isAwake = false;
     public string WakeUpWord = "Echo";
     public GameObject[] Objects;
+    public GameObject[] voiceOnly;
     private List<Routine> routineList;
     private bool voiceCommand;
     Coroutine timer;
@@ -34,6 +36,7 @@ public class Microphone : MonoBehaviour
 
     // Text to Speech
     private SpVoice voice;
+    ISpeechObjectTokens voices;
 
     string loadXMLStandalone(string fileName)
     {
@@ -49,7 +52,13 @@ public class Microphone : MonoBehaviour
 
     private void Start()
     {
+        
         voice = new SpVoice();
+
+        voices = voice.GetVoices("", "");
+
+        
+        voice.Voice = voices.Item(1);
 
         WakeUpWords.Add(WakeUpWord, WakeUp);
         WakeUpWords.Add("Siri", WakeUp);
@@ -62,18 +71,38 @@ public class Microphone : MonoBehaviour
         SFX.loop = false;
 
         AddRoutines(Objects, actions);
-
-        
+        AddTTSRoutines(voiceOnly, TTS);
 
         WakeUpRecogniser = new KeywordRecognizer(WakeUpWords.Keys.ToArray());
         WakeUpRecogniser.OnPhraseRecognized += RecognizedWakeUpWord;
         WakeUpRecogniser.Start();
         isAwake = false;
 
-        keywordRecognizer = new KeywordRecognizer(actions.Keys.ToArray());
+        string[] keywordArray = new String[actions.Keys.Count + TTS.Keys.Count];
+        string[] actionArray = actions.Keys.ToArray();
+        string[] TTSArray = TTS.Keys.ToArray();
+
+        for (int i = 0; i < actionArray.Length; i++)
+        {
+            keywordArray[i] = actionArray[i];
+        }
+
+        for (int i = 0; i < TTSArray.Length; i++)
+        {
+            keywordArray[actionArray.Length + i] = TTSArray[i];
+        }
+
+        for (int i = 0; i < keywordArray.Length; i++)
+        {
+            print(keywordArray[i]);
+        }
+
+        keywordRecognizer = new KeywordRecognizer(keywordArray);
         keywordRecognizer.OnPhraseRecognized += RecognizedCommand;
 
     }
+
+    
 
 
     float currCountdownValue;
@@ -104,6 +133,14 @@ public class Microphone : MonoBehaviour
     {
         Debug.Log(speech.text);
 
+        if (speech.text == "Jarvis")
+        {
+            voice.Voice = voices.Item(0);
+        }
+        else
+        {
+            voice.Voice = voices.Item(1);
+        }
         WakeUpWords[speech.text].Invoke();
     }
     private void RecognizedCommand(PhraseRecognizedEventArgs speech)
@@ -111,9 +148,17 @@ public class Microphone : MonoBehaviour
         Debug.Log(speech.text);
         if (isAwake == true)
         {
-            ActionInvoker temp = actions[speech.text];
-            temp.anim.SetBool(temp.str, temp.isTrue);
-            
+
+            try
+            {
+                actions[speech.text].Invoke();
+            }
+            catch (KeyNotFoundException)
+            {
+                TTS[speech.text].Invoke();
+            }
+
+
         }
         Finish();
     }
@@ -140,32 +185,40 @@ public class Microphone : MonoBehaviour
         printActions(actions);
     }
 
-    void AddTTSRoutine(GameObject[] objList, Dictionary<string, ActionInvoker> actions)
+    void AddTTSRoutines(GameObject[] voiceOnly, Dictionary<string, TTSInvoker> TTS)
     {
-        for (int i = 0; i < objList.Length; i++) // Cycle through "Smart" objects
+        for (int i = 0; i < voiceOnly.Length; i++) // Cycle through "Smart" objects
         {
-            for (int j = 0; j < objList[i].transform.childCount; j++) //Cycle through child objects of "smart" object
+            for (int j = 0; j < voiceOnly[i].transform.childCount; j++) //Cycle through child objects of "smart" object
             {
-                GameObject childObj = objList[i].transform.GetChild(j).gameObject; //set a child to variable
+                GameObject childObj = voiceOnly[i].transform.GetChild(j).gameObject; //set a child to variable
 
                 if (childObj.GetComponent<TTSRoutine>() == true) //Check if object has a routine script
                 {
-                    for (int k = 0; k < childObj.GetComponent<Routine>().command.Length; k++) // Cycle through commands
+                    for (int k = 0; k < childObj.GetComponent<TTSRoutine>().command.Length; k++) // Cycle through commands
                     {
                         //Add command to dictionary
-                        //ActionInvoker ai = new ActionInvoker(objList[i].GetComponent<Animator>(), childObj.GetComponent<RoutineRoutine>().MethodName, childObj.GetComponent<Routine>().istrue);
-                        actions.Add(childObj.GetComponent<TTSRoutine>().command[k], ai);
+                        TTSInvoker ti = new TTSInvoker(voice, childObj.GetComponent<TTSRoutine>().textToSpeech);
+                        TTS.Add(childObj.GetComponent<TTSRoutine>().command[k], ti);
                     }
                 }
             }
         }
-        printActions(actions);
+        printTTS(TTS);
     }
 
 
-    void printActions(Dictionary<string, ActionInvoker> actions)
+    void printActions(Dictionary<string, ActionInvoker> TTS)
     {
-        foreach (KeyValuePair<string, ActionInvoker> s in actions) //Print All Commands to console
+        foreach (KeyValuePair<string, ActionInvoker> s in TTS) //Print All Commands to console
+        {
+            print(s.Key);
+        }
+    }
+
+    void printTTS(Dictionary<string, TTSInvoker> actions)
+    {
+        foreach (KeyValuePair<string, TTSInvoker> s in actions) //Print All Commands to console
         {
             print(s.Key);
         }

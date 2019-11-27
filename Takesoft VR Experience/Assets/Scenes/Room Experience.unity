@@ -1486,7 +1486,7 @@ GameObject:
   - component: {fileID: 13417853}
   - component: {fileID: 13417852}
   m_Layer: 0
-  m_Name: GameObject (1)
+  m_Name: Weather
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1504,6 +1504,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d1f0d70bb88aac549a992adb06f5f070, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  command:
+  - What's the weather
+  - How's the weather
+  - weather
+  textToSpeech: Today in Plymouth, showers are expected. There will be a high of 12
+    degrees and a low of 6 degrees.
 --- !u!4 &13417853
 Transform:
   m_ObjectHideFlags: 0
@@ -1511,12 +1517,12 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 13417851}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -1.3614072, y: 1.4398849, z: 3.4005992}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 38
+  m_Father: {fileID: 800904530}
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!43 &15132022
 Mesh:
@@ -13592,6 +13598,8 @@ MonoBehaviour:
   - {fileID: 1814025792}
   - {fileID: 391418417}
   - {fileID: 1785675464}
+  voiceOnly:
+  - {fileID: 800904529}
   OnSound: {fileID: 8300000, guid: b23f543176aa04b4385fc3a6659d99b4, type: 3}
   OffSound: {fileID: 8300000, guid: b5e19799c3571a244b66606b81c36614, type: 3}
 --- !u!82 &460772016
@@ -16205,6 +16213,52 @@ Mesh:
     offset: 0
     size: 0
     path: 
+--- !u!1 &566895173
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 566895174}
+  - component: {fileID: 566895175}
+  m_Layer: 0
+  m_Name: Time
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &566895174
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 566895173}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 800904530}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &566895175
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 566895173}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d1f0d70bb88aac549a992adb06f5f070, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  command:
+  - What's the time
+  textToSpeech: Currently it's 11:45
 --- !u!1 &606944259
 GameObject:
   m_ObjectHideFlags: 0
@@ -25017,6 +25071,38 @@ MonoBehaviour:
   obj: {fileID: 1259504324}
   MethodName: 
   istrue: 0
+--- !u!1 &800904529
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 800904530}
+  m_Layer: 0
+  m_Name: Voice List
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &800904530
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 800904529}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -1.3614072, y: 1.4398849, z: 3.4005992}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children:
+  - {fileID: 13417853}
+  - {fileID: 566895174}
+  m_Father: {fileID: 0}
+  m_RootOrder: 38
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!43 &821897349
 Mesh:
   m_ObjectHideFlags: 0
