@@ -66,6 +66,7 @@ public class Microphone : MonoBehaviour
         WakeUpWords.Add("Hey Google", WakeUp);
         WakeUpWords.Add("OK Google", WakeUp);
         WakeUpWords.Add("Jarvis", WakeUp);
+        WakeUpWords.Add("Hans", WakeUp);
 
         SFX = this.GetComponent<AudioSource>();
         SFX.loop = false;
