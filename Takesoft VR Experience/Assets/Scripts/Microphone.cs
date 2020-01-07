@@ -27,6 +27,7 @@ public class Microphone : MonoBehaviour
     private List<Routine> routineList;
     private bool voiceCommand;
     Coroutine timer;
+    public GameObject microphone;
 
     public AudioClip OnSound;
     public AudioClip OffSound;
@@ -120,6 +121,7 @@ public class Microphone : MonoBehaviour
         isAwake = false;
         keywordRecognizer.Stop();
         PlayOffSound();
+        microphone.SetActive(false);
         print("Now Going to Sleep...");
     }
 
@@ -162,6 +164,7 @@ public class Microphone : MonoBehaviour
 
         }
         Finish();
+        microphone.SetActive(false);
     }
 
     void AddRoutines(GameObject[] objList, Dictionary<string, ActionInvoker> actions)
@@ -231,6 +234,7 @@ public class Microphone : MonoBehaviour
         keywordRecognizer.Start();
         isAwake = true;
         PlayOnSound();
+        microphone.SetActive(true);
         timer = StartCoroutine(StartCountdown());
     }
 
